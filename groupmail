@@ -1,0 +1,18 @@
+#!/bin/bash
+
+P=${1-${PROJECT}}
+
+# getent group ${1-${PROJECT}} | sed 's/.*://' | sed 's/$/,/' | sed 's/,/@nci.org.au,/g'
+
+IFS=,
+read -r -a uarray <<< "$(getent group ${1-${PROJECT}})"
+
+newuarray=()
+for u in "${uarray[@]}"; do
+    if [[ "$u" =~ ^[a-z]{3}[0-9]{3}$ ]]; then
+        # Valid user
+        newuarray+=$u"@nci.org.au,"
+    fi
+done
+
+echo "${newuarray[*]}"
